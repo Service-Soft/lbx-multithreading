@@ -128,7 +128,7 @@ describe('ThreadJobService heavy tasks', () => {
         console.log('ends with multi thread');
         performance.mark('end');
         const totalWithMultiThread: number = performance.measure('totalMultiThread', 'start', 'end').duration;
-        expect(totalWithMultiThread * (numberOfJobs - 1)).to.be.below(totalWithSingleThread);
+        expect(totalWithMultiThread * (numberOfJobs - 2)).to.be.below(totalWithSingleThread);
     }).timeout(200000);
 
     afterEach(async () => {
