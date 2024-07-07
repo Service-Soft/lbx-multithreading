@@ -1,0 +1,61 @@
+{
+    "name": "showcase",
+    "version": "0.0.1",
+    "description": "showcase",
+    "keywords": [
+        "loopback-application",
+        "loopback"
+    ],
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "engines": {
+        "node": "18 || 20 || 22"
+    },
+    "scripts": {
+        "build": "lb-tsc",
+        "build:watch": "lb-tsc --watch",
+        "pretest": "npm run rebuild",
+        "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
+        "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js",
+        "docker:build": "docker build -t showcase .",
+        "docker:run": "docker run -p 3000:3000 -d showcase",
+        "premigrate": "npm run build",
+        "migrate": "node ./dist/migrate",
+        "preopenapi-spec": "npm run build",
+        "openapi-spec": "node ./dist/openapi-spec",
+        "prestart": "npm run rebuild",
+        "start": "node -r source-map-support/register .",
+        "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+        "rebuild": "npm run clean && npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "tim-fabian <fabian@service-soft.de>",
+    "license": "",
+    "files": [
+        "README.md",
+        "dist",
+        "src",
+        "!*/__tests__"
+    ],
+    "dependencies": {
+        "@loopback/boot": "^7.0.2",
+        "@loopback/core": "^6.0.2",
+        "@loopback/repository": "^7.0.2",
+        "@loopback/rest": "^14.0.2",
+        "@loopback/rest-explorer": "^7.0.2",
+        "@loopback/service-proxy": "^7.0.2",
+        "lbx-multithreading": "file:..",
+        "loopback-connector-mysql": "^7.0.12",
+        "tslib": "^2.0.0"
+    },
+    "devDependencies": {
+        "@loopback/build": "^11.0.2",
+        "@loopback/testlab": "^7.0.2",
+        "@types/node": "^16.18.96",
+        "source-map-support": "^0.5.21",
+        "typescript": "~5.2.2"
+    }
+}

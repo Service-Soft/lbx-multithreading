@@ -1,0 +1,57 @@
+{
+    "name": "lbx-multithreading",
+    "version": "0.0.1",
+    "description": "Open Source",
+    "keywords": [
+        "loopback-extension",
+        "loopback"
+    ],
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "engines": {
+        "node": "18 || 20 || 22"
+    },
+    "scripts": {
+        "build": "lb-tsc",
+        "build:watch": "lb-tsc --watch",
+        "pretest": "npm run rebuild",
+        "test": "lb-mocha --allow-console-logs --timeout 10000 --bail \"dist/__tests__\"",
+        "test:quick": "npm test -- --grep '^(?!.*ThreadJobService heavy tasks)'",
+        "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js",
+        "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+        "rebuild": "npm run clean && npm run build",
+        "lint": "eslint ./ --max-warnings=0"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "tim-fabian <fabian@service-soft.de>",
+    "license": "",
+    "files": [
+        "README.md",
+        "dist",
+        "src",
+        "!*/__tests__"
+    ],
+    "peerDependencies": {
+        "@loopback/core": "^6.0.2",
+        "ts-node": ""
+    },
+    "dependencies": {
+        "rxjs": "^7.8.1",
+        "tslib": "^2.6.3",
+        "uuid": "^10.0.0"
+    },
+    "devDependencies": {
+        "@loopback/build": "^11.0.3",
+        "@loopback/core": "^6.1.0",
+        "@loopback/repository": "^7.0.3",
+        "@loopback/testlab": "^7.0.3",
+        "@types/node": "^20.14.6",
+        "@types/uuid": "^9.0.8",
+        "eslint-config-service-soft": "^1.5.1",
+        "source-map-support": "^0.5.21",
+        "typescript": "~5.4.5"
+    }
+}
