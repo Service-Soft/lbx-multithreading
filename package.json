@@ -1,10 +1,14 @@
 {
     "name": "lbx-multithreading",
-    "version": "0.0.1",
-    "description": "Open Source",
+    "version": "1.0.0",
+    "description": "This packages aims to take care of most of your multi threading concerns, including: -a reusable worker pool that is automatically sized based on the available threads (can be [configured](#optional-configuration)) - support for typescript out of the box - a way to run worker files, being really close to the original implementation - a simple way to run a function in a separate thread - storing data about your thread jobs like status, error etc. inside the database - utility functions to easily update the progress, status, error or result of the job - configurable timeouts for jobs and self healing capabilities of the worker pool",
     "keywords": [
-        "loopback-extension",
-        "loopback"
+        "loopback-4",
+        "loopback",
+        "multithreading",
+        "thread",
+        "worker",
+        "worker-pool"
     ],
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -27,23 +31,26 @@
         "url": ""
     },
     "author": "tim-fabian <fabian@service-soft.de>",
-    "license": "",
+    "license": "MIT",
     "files": [
         "README.md",
+        "LICENSE.md",
         "dist",
         "src",
         "!*/__tests__"
     ],
     "peerDependencies": {
         "@loopback/core": "^6.0.2",
-        "ts-node": ""
+        "rxjs": "",
+        "ts-node": "",
+        "uuid": "^10"
     },
     "dependencies": {
-        "rxjs": "^7.8.1",
-        "tslib": "^2.6.3",
-        "uuid": "^10.0.0"
+        "tslib": "^2.6.3"
     },
     "devDependencies": {
+        "rxjs": "^7.8.1",
+        "uuid": "^10.0.0",
         "@loopback/build": "^11.0.3",
         "@loopback/core": "^6.1.0",
         "@loopback/repository": "^7.0.3",
