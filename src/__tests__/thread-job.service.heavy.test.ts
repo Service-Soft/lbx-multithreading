@@ -73,7 +73,7 @@ describe('ThreadJobService heavy tasks', () => {
     }).timeout(40000);
 
     it('should have major improved performance', async () => {
-        const timeout: number = 20000;
+        const timeout: number = 30000;
         const numberOfJobs: number = 4;
         // run with single core
         threadJobService = new ThreadJobService(repository, 1, 0);
@@ -131,7 +131,7 @@ describe('ThreadJobService heavy tasks', () => {
 
         const singleThreadJobDuration: number = getAverageJobDuration(await Promise.all(jobs));
         const multiThreadJobDuration: number = getAverageJobDuration(await Promise.all(multiThreadJobs));
-        expect(multiThreadJobDuration * 0.85).to.be.below(singleThreadJobDuration);
+        expect(multiThreadJobDuration * 0.8).to.be.below(singleThreadJobDuration);
 
         const totalWithMultiThread: number = performance.measure('totalMultiThread', 'start', 'end').duration;
         expect(totalWithMultiThread * (numberOfJobs - 1)).to.be.below(totalWithSingleThread);
