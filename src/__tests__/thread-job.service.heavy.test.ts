@@ -127,8 +127,13 @@ describe('ThreadJobService heavy tasks', () => {
         await Promise.all(multiThreadJobs);
         console.log('ends with multi thread');
         performance.mark('end');
+
+        const singleThreadJobDuration: number = getAverageJobDuration(await Promise.all(jobs));
+        const multiThreadJobDuration: number = getAverageJobDuration(await Promise.all(multiThreadJobs));
+        expect(multiThreadJobDuration * 0.85).to.be.below(singleThreadJobDuration);
+
         const totalWithMultiThread: number = performance.measure('totalMultiThread', 'start', 'end').duration;
-        expect(totalWithMultiThread * (numberOfJobs - 2)).to.be.below(totalWithSingleThread);
+        expect(totalWithMultiThread * (numberOfJobs - 1)).to.be.below(totalWithSingleThread);
     }).timeout(200000);
 
     afterEach(async () => {
@@ -138,3 +143,8 @@ describe('ThreadJobService heavy tasks', () => {
         await repository.deleteAll();
     });
 });
+
+function getAverageJobDuration(jobs: ThreadJobEntity<BaseWorkerData, unknown>[]): number {
+    const total: number = jobs.reduce((prev, next) => prev + (next.stoppedAtMs as number) - (next.startedAtMs as number), 0);
+    return total / jobs.length;
+}
