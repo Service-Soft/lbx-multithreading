@@ -24,26 +24,24 @@ parentPort.on('message', (wData: BaseWorkerData | FunctionWorkerData<unknown>) =
     // @ts-ignore-next-line
     workerData = wData;
 
-    // Clear the module from the cache
-    if (wData.filePath.length) {
-        if (wData.filePath.endsWith('.ts')) {
-            const parts: string[] = wData.filePath.split('.ts');
-            parts.splice(parts.length - 1, 1);
-            wData.filePath = parts.join('') + '.js';
-        }
-
-        if (require.cache[require.resolve(wData.filePath)]) {
-            // eslint-disable-next-line typescript/no-dynamic-delete
-            delete require.cache[require.resolve(wData.filePath)];
-        }
-    }
-
     if (isFunctionWorkerData(wData)) {
         void callFunction(wData);
+        return;
     }
-    else {
-        void importWorkerFile(wData);
+
+    // Clear the module from the cache
+    if (wData.filePath.endsWith('.ts')) {
+        const parts: string[] = wData.filePath.split('.ts');
+        parts.splice(parts.length - 1, 1);
+        wData.filePath = parts.join('') + '.js';
     }
+
+    if (require.cache[require.resolve(wData.filePath)]) {
+        // eslint-disable-next-line typescript/no-dynamic-delete
+        delete require.cache[require.resolve(wData.filePath)];
+    }
+
+    void importWorkerFile(wData);
 });
 
 async function callFunction(wData: FunctionWorkerData<unknown>): Promise<void> {

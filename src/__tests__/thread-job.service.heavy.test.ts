@@ -13,6 +13,7 @@ import { ThreadJobService } from '../services';
 
 const emptyTsWorkerFilePath: string = path.join(__dirname, 'mocks', 'empty-ts-worker-file.mock.js');
 const fibonacciTsWorkerFilePath: string = path.join(__dirname, 'mocks', 'fibonacci-ts-worker-file.mock.js');
+const timeoutWorkerFilePath: string = path.join(__dirname, 'mocks', 'timeout-ts-worker-file.mock.ts');
 
 const osThreads: number = availableParallelism();
 
@@ -72,7 +73,7 @@ describe('ThreadJobService heavy tasks', () => {
     }).timeout(40000);
 
     it('should have major improved performance', async () => {
-        const startValue: number = 46;
+        const timeout: number = 30000;
         const numberOfJobs: number = 4;
         // run with single core
         threadJobService = new ThreadJobService(repository, 1, 0);
@@ -83,7 +84,7 @@ describe('ThreadJobService heavy tasks', () => {
         for (let i: number = 0; i < numberOfJobs; i++) {
             jobs.push(
                 threadJobService.runThreadJob({
-                    workerData: { filePath: fibonacciTsWorkerFilePath, startValue: startValue },
+                    workerData: { filePath: timeoutWorkerFilePath, timeout: timeout },
                     onMessage: m => console.log(m),
                     onComplete: () => {
                         console.log('completed the job', i, `in ${performance.measure('total-' + i, 'startSingleThread').duration.toFixed(2)} ms`);
@@ -109,7 +110,7 @@ describe('ThreadJobService heavy tasks', () => {
         for (let i: number = 0; i < numberOfJobs; i++) {
             multiThreadJobs.push(
                 threadJobService.runThreadJob({
-                    workerData: { filePath: fibonacciTsWorkerFilePath, startValue: startValue },
+                    workerData: { filePath: timeoutWorkerFilePath, timeout: timeout },
                     onMessage: m => console.log(m),
                     onComplete: () => {
                         console.log(
@@ -127,6 +128,11 @@ describe('ThreadJobService heavy tasks', () => {
         await Promise.all(multiThreadJobs);
         console.log('ends with multi thread');
         performance.mark('end');
+
+        const singleThreadJobDuration: number = getAverageJobDuration(await Promise.all(jobs));
+        const multiThreadJobDuration: number = getAverageJobDuration(await Promise.all(multiThreadJobs));
+        expect(multiThreadJobDuration * 0.8).to.be.below(singleThreadJobDuration);
+
         const totalWithMultiThread: number = performance.measure('totalMultiThread', 'start', 'end').duration;
         expect(totalWithMultiThread * (numberOfJobs - 1)).to.be.below(totalWithSingleThread);
     }).timeout(200000);
@@ -138,3 +144,8 @@ describe('ThreadJobService heavy tasks', () => {
         await repository.deleteAll();
     });
 });
+
+function getAverageJobDuration(jobs: ThreadJobEntity<BaseWorkerData, unknown>[]): number {
+    const total: number = jobs.reduce((prev, next) => prev + (next.stoppedAtMs as number) - (next.startedAtMs as number), 0);
+    return total / jobs.length;
+}
